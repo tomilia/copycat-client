@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { Col, Row, Container } from 'react-bootstrap';
 import fetch from "node-fetch";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const App = () => {
   const [words, setWords] = useState([]);
@@ -60,24 +62,37 @@ const App = () => {
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
   }
-  async function handleKeyPress (e){
-    
+  const handleDelete = (fileName) => {
+    fetch(`http://58.176.223.95:5277/Copy/File/Delete/${fileName}`, {
+      method: 'POST'
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Error delete file');
+        }
+        alert("File Delete Successfully");
+        window.location.reload();
+      });
+  }
+
+  async function handleKeyPress(e) {
+
     if (e.code === "Enter") {
 
       const data = new URLSearchParams();
       data.append('word', e.target.value);
       console.log(data);
-      const response = await fetch("http://58.176.223.95:5277/Copy/AddWord?word="+e.target.value,{
+      const response = await fetch("http://58.176.223.95:5277/Copy/AddWord?word=" + e.target.value, {
         method: "POST",
       })
-      .then((response) => {
-        if(response.status == 200){
-          fetchWords();
-        }
-      })
-      .catch((error) => {
-        console.log(error)
-      });
+        .then((response) => {
+          if (response.status == 200) {
+            fetchWords();
+          }
+        })
+        .catch((error) => {
+          console.log(error)
+        });
     }
   };
   const fetchWords = async () => {
@@ -88,9 +103,9 @@ const App = () => {
   };
   const fetchFiles = async () => {
     fetch('http://58.176.223.95:5277/Copy/GetFiles')
-    .then(response => response.json())
-    .then(data => setFiles(data))
-    .catch(error => console.error('Error:', error));
+      .then(response => response.json())
+      .then(data => setFiles(data))
+      .catch(error => console.error('Error:', error));
   };
 
   useEffect(() => {
@@ -99,40 +114,43 @@ const App = () => {
   }, []);
 
   return (
-    <div style={{margin: 10}}>
-      <h1>All Words</h1>
-      {words.map((word) => (
-        <li key={word}>{word}</li>
-      ))}
-      <input
-        type="text"
-        id="input-field"
-        value={inputValue}
-        onChange={handleInputChange}
-        onKeyDown={handleKeyPress}
-      />
-      <hr></hr>
-      <h5>
-        File Upload:
-      </h5>
-      <input type="file" onChange={handleFileChange} />
-      <button onClick={handleFileUpload}>Upload File</button>
-      <hr></hr>
-      <h5>File Download</h5>
-      <Container>
-      <Row>
-        {files.map((file, index) => (
-          <Col sm={4} key={index} onClick={() => handleDownload(file.name)} style={{marginTop: 10}}>
-            <div>
-              <img src={`data:image/jpeg;base64,${file.preview}`} alt="Preview" />
-              <h4>{file.name}</h4>
-            </div>
-          </Col>
+    <Container>
+      <div style={{ margin: 10 }}>
+        <h1>All Words</h1>
+        {words.map((word) => (
+          <li key={word}>{word}</li>
         ))}
-      </Row>
+        <input
+          type="text"
+          id="input-field"
+          value={inputValue}
+          onChange={handleInputChange}
+          onKeyDown={handleKeyPress}
+        />
+        <hr></hr>
+        <h5>
+          File Upload:
+        </h5>
+        <input type="file" onChange={handleFileChange} />
+        <button onClick={handleFileUpload}>Upload File</button>
+        <hr></hr>
+        <h5>File Download</h5>
+
+        <Row>
+          {files.map((file, index) => (
+            <Col key={index}>
+              <div>
+                <img src={`data:image/jpeg;base64,${file.preview}`} alt="Preview" />
+                <h4>{file.name.substring(0, 11)}</h4>
+                <button onClick={() => handleDownload(file.name)}>Download</button>
+                <button onClick={() => handleDelete(file.name)}>Delete</button>
+              </div>
+            </Col>
+          ))}
+        </Row>
+      </div>
     </Container>
-    </div>
-    
+
   );
 };
 
