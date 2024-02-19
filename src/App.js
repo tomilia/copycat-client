@@ -119,14 +119,18 @@ const App = () => {
       <button onClick={handleFileUpload}>Upload File</button>
       <hr></hr>
       <h5>File Download</h5>
-      <ul>
+      <Container>
+      <Row>
         {files.map((file, index) => (
-          <li key={index} onClick={() => handleDownload(file)} style={{marginTop: 10}}>
-            {file}
-          </li>
-          
+          <Col sm={4} key={index} onClick={() => handleDownload(file.name)} style={{marginTop: 10}}>
+            <div>
+              <img src={`data:image/jpeg;base64,${file.preview}`} alt="Preview" />
+              <h4>{file.name}</h4>
+            </div>
+          </Col>
         ))}
-      </ul>
+      </Row>
+    </Container>
     </div>
     
   );
