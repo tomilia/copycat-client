@@ -114,7 +114,7 @@ const App = () => {
   }, []);
 
   return (
-    <Container>
+    <Container fluid>
       <div style={{ margin: 10 }}>
         <h1>All Words</h1>
         {words.map((word) => (
@@ -141,7 +141,7 @@ const App = () => {
             <Col key={index}>
               <div>
                 <img src={`data:image/jpeg;base64,${file.preview}`} alt="Preview" />
-                <h4>{file.name.substring(0, 11)}</h4>
+                <h4>{file.name.split(".")[0]}</h4>
                 <button onClick={() => handleDownload(file.name)}>Download</button>
                 <button onClick={() => handleDelete(file.name)}>Delete</button>
               </div>
