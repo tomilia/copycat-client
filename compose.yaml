@@ -8,9 +8,8 @@
 # database or a cache. For examples, see the Awesome Compose repository:
 # https://github.com/docker/awesome-compose
 networks:
-  proxy-copynet:
-    external:
-      name: copynet
+    copycatnet:
+        external: true
 
 services:
   client:
