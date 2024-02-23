@@ -19,7 +19,7 @@ const App = () => {
       formData.append('file', selectedFile);
 
       try {
-        const response = await fetch('http://63.250.41.222:5277/Copy/Upload', {
+        const response = await fetch('http://172.20.0.1/Copy/Upload', {
           method: 'POST',
           body: formData,
         });
@@ -36,7 +36,7 @@ const App = () => {
     }
   }
   const handleDownload = (fileName) => {
-    fetch(`http://63.250.41.222:5277/Copy/File/${fileName}`)
+    fetch(`http://172.20.0.1/Copy/File/${fileName}`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Error downloading file');
@@ -63,7 +63,7 @@ const App = () => {
     setInputValue(event.target.value);
   }
   const handleDelete = (fileName) => {
-    fetch(`http://63.250.41.222:5277/Copy/File/Delete/${fileName}`, {
+    fetch(`http://172.20.0.1/Copy/File/Delete/${fileName}`, {
       method: 'POST'
     })
       .then(response => {
@@ -82,7 +82,7 @@ const App = () => {
       const data = new URLSearchParams();
       data.append('word', e.target.value);
       console.log(data);
-      const response = await fetch("http://63.250.41.222:5277/Copy/AddWord?word=" + e.target.value, {
+      const response = await fetch("http://172.20.0.1/Copy/AddWord?word=" + e.target.value, {
         method: "POST",
       })
         .then((response) => {
@@ -96,13 +96,13 @@ const App = () => {
     }
   };
   const fetchWords = async () => {
-    const response = await fetch("http://63.250.41.222:5277/Copy/GetAllWordsOrderByTime");
+    const response = await fetch("http://172.20.0.1/Copy/GetAllWordsOrderByTime");
     console.log(response)
     const data = await response.json();
     setWords(data);
   };
   const fetchFiles = async () => {
-    fetch('http://63.250.41.222:5277/Copy/GetFiles')
+    fetch('http://172.20.0.1/Copy/GetFiles')
       .then(response => response.json())
       .then(data => setFiles(data))
       .catch(error => console.error('Error:', error));
