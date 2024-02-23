@@ -8,9 +8,9 @@
 # database or a cache. For examples, see the Awesome Compose repository:
 # https://github.com/docker/awesome-compose
 networks:
-  proxy-copynet:
-    name: copycatnet
-    external: true
+  mynetwork:
+    external:
+      name: mynetwork
 
 services:
   client:
@@ -21,7 +21,7 @@ services:
     ports:
       - 3000:3000
     networks:
-      - proxy-copynet
+      - mynetwork
 
 # The commented out section below is an example of how to define a PostgreSQL
 # database that your application can use. `depends_on` tells Docker Compose to
