@@ -66,7 +66,7 @@ COPY --from=build /usr/src/app/. ./.
 
 
 # Expose the port that the application listens on.
-EXPOSE 3001
+EXPOSE 3000
 
 # Run the application.
-CMD npm start
+CMD npm start PORT=3000
