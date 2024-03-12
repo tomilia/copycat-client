@@ -64,6 +64,11 @@ COPY package.json .
 COPY --from=deps /usr/src/app/node_modules ./node_modules
 COPY --from=build /usr/src/app/. ./.
 
+# Copy the .env file to the container
+COPY .env .env
+
+# Set the environment variable to use dotenv
+ENV DOTENV_PATH=.env
 
 # Expose the port that the application listens on.
 EXPOSE 3000

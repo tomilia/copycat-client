@@ -20,7 +20,6 @@ const App = () => {
   };
 
   const handleFileUpload = async () => {
-    console.log(selectedFile);
     if (selectedFile) {
       const formData = new FormData();
       formData.append('file', selectedFile);
@@ -32,7 +31,7 @@ const App = () => {
         });
 
         if (response.ok) {
-          window.location.reload();
+          alert("File Delete Successfully");
         } else {
           setErrorMessage('Error uploading file');
           setShowError(true);
@@ -40,7 +39,8 @@ const App = () => {
       } catch (error) {
         console.error('Error:', error);
       } finally {
-        //setIsUploading(false);
+        setIsUploading(false);
+        window.location.reload();
       }
 
     }
@@ -55,9 +55,6 @@ const App = () => {
       })
       .then(blob => {
         const url = URL.createObjectURL(blob);
-        console.log(url);
-        console.log(blob);
-
         // Create a temporary link element and click it to initiate the file download
         const link = document.createElement('a');
         link.href = url;
@@ -90,7 +87,6 @@ const App = () => {
 
       const data = new URLSearchParams();
       data.append('word', inputValue);
-      console.log(data);
       const response = await fetch(`${config.addWordApi}?word=` + inputValue, {
         method: "POST",
       })
@@ -108,7 +104,6 @@ const App = () => {
   const fetchWords = async () => {
     try {
       const response = await fetch(`${config.listWordApi}`);
-      console.log(response)
       const data = await response.json();
       setWords(data);
     } catch (e) {
@@ -143,7 +138,7 @@ const App = () => {
             <Toast.Header closeButton={false}>
               <strong className="mr-auto" class="toast-word">Error</strong>
             </Toast.Header>
-            <Toast.Body>{errorMessage}</Toast.Body>
+            <Toast.Body class="toast-word">{errorMessage}</Toast.Body>
           </Toast>
         </div>
         <h1>UpHub</h1>
@@ -153,7 +148,7 @@ const App = () => {
             type="text"
             id="input-field"
             value={inputValue}
-            class="form-control"
+            className="form-control"
             onChange={handleInputChange}
             onKeyDown={handleEnterWord}
           />
