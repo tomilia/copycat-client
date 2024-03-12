@@ -31,7 +31,7 @@ const App = () => {
         });
 
         if (response.ok) {
-          alert("File Delete Successfully");
+          alert("File Upload Successfully");
         } else {
           setErrorMessage('Error uploading file');
           setShowError(true);
