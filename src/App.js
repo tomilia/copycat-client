@@ -132,7 +132,6 @@ const App = () => {
 
   return (
     <Container fluid>
-      <div style={{ margin: 10 }}>
         <div className="toast-container">
           <Toast show={showError} onClose={handleErrorPromptClose} className="toast" delay={6000} autohide>
             <Toast.Header closeButton={false}>
@@ -156,16 +155,13 @@ const App = () => {
             <button type="button" class="btn btn-primary" name="wordsAddButton" onClick={handleEnterWord}>Add Word</button>
           </div>
         </div>
+        {JSON.stringify(words)}
         {words.map((word) => {
           return (
             <div
               key={word}
               className=" p-1 my-1 border border-gray-200 flex items-center"
             >
-              <label>
-
-              </label>
-
               <span className="ml-4">{word}</span>
             </div>
           );
@@ -211,7 +207,6 @@ const App = () => {
             )}
           </Modal.Body>
         </Modal>
-      </div>
     </Container>
 
   );
