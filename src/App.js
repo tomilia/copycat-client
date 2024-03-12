@@ -1,42 +1,52 @@
 import React, { useState, useEffect } from "react";
-import { Col, Row, Container } from 'react-bootstrap';
+import { Col, Row, Container, Modal, Spinner } from 'react-bootstrap';
 import fetch from "node-fetch";
+import config from './config';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css'
+import Toast from 'react-bootstrap/Toast';
 
 const App = () => {
   const [words, setWords] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
   const [files, setFiles] = useState([]);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
   };
 
   const handleFileUpload = async () => {
+    console.log(selectedFile);
     if (selectedFile) {
       const formData = new FormData();
       formData.append('file', selectedFile);
-
+      setIsUploading(true);
       try {
-        const response = await fetch('http://63.250.41.222:5277/Copy/Upload', {
+        const response = await fetch(`${config.uploadApi}`, {
           method: 'POST',
           body: formData,
         });
 
         if (response.ok) {
-          alert('File uploaded successfully');
           window.location.reload();
         } else {
-          alert('Error uploading file');
+          setErrorMessage('Error uploading file');
+          setShowError(true);
         }
       } catch (error) {
         console.error('Error:', error);
+      } finally {
+        //setIsUploading(false);
       }
+
     }
   }
   const handleDownload = (fileName) => {
-    fetch(`http://63.250.41.222:5277/Copy/File/${fileName}`)
+    fetch(`${config.downloadApi}/${fileName}`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Error downloading file');
@@ -63,7 +73,7 @@ const App = () => {
     setInputValue(event.target.value);
   }
   const handleDelete = (fileName) => {
-    fetch(`http://63.250.41.222:5277/Copy/File/Delete/${fileName}`, {
+    fetch(`${config.deleteApi}/${fileName}`, {
       method: 'POST'
     })
       .then(response => {
@@ -75,14 +85,13 @@ const App = () => {
       });
   }
 
-  async function handleKeyPress(e) {
-
-    if (e.code === "Enter") {
+  async function handleEnterWord(e) {
+    if (e.code === "Enter" || e.type === "click") {
 
       const data = new URLSearchParams();
-      data.append('word', e.target.value);
+      data.append('word', inputValue);
       console.log(data);
-      const response = await fetch("http://63.250.41.222:5277/Copy/AddWord?word=" + e.target.value, {
+      const response = await fetch(`${config.addWordApi}?word=` + inputValue, {
         method: "POST",
       })
         .then((response) => {
@@ -91,21 +100,34 @@ const App = () => {
           }
         })
         .catch((error) => {
-          console.log(error)
+          setErrorMessage(error.toString());
+          setShowError(true);
         });
     }
   };
   const fetchWords = async () => {
-    const response = await fetch("http://63.250.41.222:5277/Copy/GetAllWordsOrderByTime");
-    console.log(response)
-    const data = await response.json();
-    setWords(data);
+    try {
+      const response = await fetch(`${config.listWordApi}`);
+      console.log(response)
+      const data = await response.json();
+      setWords(data);
+    } catch (e) {
+      setErrorMessage(e.toString());
+      setShowError(true);
+    }
   };
   const fetchFiles = async () => {
-    fetch('http://63.250.41.222:5277/Copy/GetFiles')
+    fetch(`${config.listFileApi}`)
       .then(response => response.json())
       .then(data => setFiles(data))
-      .catch(error => console.error('Error:', error));
+      .catch(error => {
+        setErrorMessage(error.toString());
+        setShowError(true);
+      });
+  };
+
+  const handleErrorPromptClose = () => {
+    setShowError(false);
   };
 
   useEffect(() => {
@@ -116,23 +138,54 @@ const App = () => {
   return (
     <Container fluid>
       <div style={{ margin: 10 }}>
-        <h1>All Words</h1>
-        {words.map((word) => (
-          <li key={word}>{word}</li>
-        ))}
-        <input
-          type="text"
-          id="input-field"
-          value={inputValue}
-          onChange={handleInputChange}
-          onKeyDown={handleKeyPress}
-        />
+        <div className="toast-container">
+          <Toast show={showError} onClose={handleErrorPromptClose} className="toast" delay={6000} autohide>
+            <Toast.Header closeButton={false}>
+              <strong className="mr-auto" class="toast-word">Error</strong>
+            </Toast.Header>
+            <Toast.Body>{errorMessage}</Toast.Body>
+          </Toast>
+        </div>
+        <h1>UpHub</h1>
+
+        <div class="input-group mb-1 w-50">
+          <input
+            type="text"
+            id="input-field"
+            value={inputValue}
+            class="form-control"
+            onChange={handleInputChange}
+            onKeyDown={handleEnterWord}
+          />
+          <div class="input-group-append">
+            <button type="button" class="btn btn-primary" name="wordsAddButton" onClick={handleEnterWord}>Add Word</button>
+          </div>
+        </div>
+        {words.map((word) => {
+          return (
+            <div
+              key={task.id}
+              className=" p-1 my-1 border border-gray-200 flex items-center"
+            >
+              <label>
+
+              </label>
+
+              <span className="ml-4">{word}</span>
+            </div>
+          );
+        })}
+
         <hr></hr>
         <h5>
           File Upload:
         </h5>
-        <input type="file" onChange={handleFileChange} />
-        <button onClick={handleFileUpload}>Upload File</button>
+        <div class="dropzone">
+          <img src="http://100dayscss.com/codepen/upload.svg" class="upload-icon" />
+          <input type="file" class="upload-input" onChange={handleFileChange} />
+        </div>
+        <hr></hr>
+        <button type="button" class="btn btn-success" name="uploadbutton" onClick={handleFileUpload}>Upload file</button>
         <hr></hr>
         <h5>File Download</h5>
 
@@ -148,6 +201,21 @@ const App = () => {
             </Col>
           ))}
         </Row>
+
+        <Modal show={isUploading} onHide={() => { }}>
+          <Modal.Body>
+            {isUploading ? (
+              <div className="text-center">
+                <Spinner animation="grow" variant="danger"  />
+                <p>Uploading file...</p>
+                <i>Sponsored by...Mr.Balltsz</i>
+                <img class="w-100" src={require('./images/frenchie-balltsz.png')}></img>
+              </div>
+            ) : (
+              <p>File upload complete!</p>
+            )}
+          </Modal.Body>
+        </Modal>
       </div>
     </Container>
 

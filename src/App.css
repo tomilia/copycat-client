@@ -12,7 +12,32 @@
     animation: App-logo-spin infinite 20s linear;
   }
 }
-
+.upload-icon {
+	margin: 25px 2px 2px 2px;
+}
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+}
+.upload-input {
+	position: relative;
+  top:10px;
+	left: 20px;
+	opacity: 1;
+}
+.toast-word{
+  color: darkred;
+  border: none;
+}
+.dropzone {
+	width: 250px;
+	height: 100px;
+	border: 1px dashed #999;
+	border-radius: 3px;
+	text-align: center;
+}
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
