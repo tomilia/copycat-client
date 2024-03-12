@@ -141,9 +141,9 @@ const App = () => {
             <Toast.Body class="toast-word">{errorMessage}</Toast.Body>
           </Toast>
         </div>
-        <h1>UpHub</h1>
-
-        <div class="input-group mb-1 w-50">
+        <img src={require("./images/balltsz-uphub-logo.png")} className="rounded img-fluid mx-auto d-block" style={{maxWidth: 25 + "em"}}></img>
+        <hr></hr>
+        <div class="input-group mb-1">
           <input
             type="text"
             id="input-field"
