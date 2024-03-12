@@ -159,7 +159,7 @@ const App = () => {
         {words.map((word) => {
           return (
             <div
-              key={task.id}
+              key={word}
               className=" p-1 my-1 border border-gray-200 flex items-center"
             >
               <label>
